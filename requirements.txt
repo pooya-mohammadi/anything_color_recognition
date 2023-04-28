@@ -1,0 +1,7 @@
+torch
+deep_utils==1.*
+albumentations
+opencv-python
+scikit-learn
+pytorch-lightning==1.9.*
+numpy==1.23.*
