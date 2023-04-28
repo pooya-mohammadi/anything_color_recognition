@@ -4,7 +4,7 @@ In this repository, the codes for training anything color recognition are provid
 https://arxiv.org/pdf/1510.07391.pdf named **Vehicle Color Recognition using Convolutional Neural Network**
 
 
-![img.png](img.png)
+![img.png](artifacts/img.png)
 
 The colors are as follows:
 [`Black`, `Blue`, `Brown`, `Green`, `Pink`, `Red`, `Silver`, `White`, `Yellow`].
