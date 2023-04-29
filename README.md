@@ -36,7 +36,7 @@ tensorboard --logdir .
 
 # inference.py
 ```commandline
-python inference.py --model_path output/exp_4/best.ckpt --labels_map_path output/exp_4/labels_map.pkl --img_path sample_images/sample_01.jpg
+python inference.py --model_path output/exp_1/best.ckpt --labels_map_path output/exp_1/labels_map.pkl --img_path sample_images/sample_01.jpg
 ```
 
 # References:
