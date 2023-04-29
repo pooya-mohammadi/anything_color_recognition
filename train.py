@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from dataset import VehicleDataset
-from model import ColorModel
+from deep_utils import ColorRecognitionCNNTorch
 from settings import Config
 from torch import nn
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
@@ -17,7 +17,7 @@ class LitModel(pl.LightningModule):
     def __init__(self):
         super(LitModel, self).__init__()
         self.lr = Config.train_lr
-        self.model = ColorModel(n_classes=Config.n_classes)
+        self.model = ColorRecognitionCNNTorch(n_classes=Config.n_classes)
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, x):

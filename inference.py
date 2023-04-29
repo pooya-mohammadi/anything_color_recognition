@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser.add_argument("--model_path", default="output/exp_1/best.ckpt")
     parser.add_argument("--device", default="cpu", help="cuda or cpu")
     parser.add_argument("--labels_map_path", default="output/exp_1/labels_map.pkl", help="path to class label")
-    parser.add_argument("--img_path", default="sample_images/sample_03.jpg")
+    parser.add_argument("--img_path", default=r"C:\Users\pooya\projects\edge-device-knit\knitvision_imagedataset\object-detection-balanced\dataset\train\images/385_HD.jpg")
     args = parser.parse_args()
     model = ModelPred(args.model_path,
                       labels_map_path=args.labels_map_path,
