@@ -13,7 +13,7 @@ class Config:
     file_name = "best"
     validation_size = 0.2
     batch_size = 64
-    train_epochs = 25
+    train_epochs = 50
     n_workers = 8
     train_lr = 1e-3
     lr_reduce_factor = 0.1
