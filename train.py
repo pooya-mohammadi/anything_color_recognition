@@ -1,7 +1,7 @@
 from os.path import join
 import torch
 import pytorch_lightning as pl
-from deep_utils import crawl_directory_dataset, dump_pickle, mkdir_incremental, BlocksTorch, TorchUtils
+from deep_utils import crawl_directory_dataset, mkdir_incremental, BlocksTorch, TorchUtils
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -85,15 +85,15 @@ class LitModel(pl.LightningModule):
         return {"optimizer": optimizer, "lr_scheduler": scheduler, "monitor": "val_loss"}
 
     @staticmethod
-    def get_loaders(output_dir=None):
+    def get_loaders():
         x, y = crawl_directory_dataset(Config.dataset_dir)
         x_train, x_val, y_train, y_val = train_test_split(x, y,
                                                           test_size=Config.validation_size,
                                                           stratify=y)
         class_to_id = {v: k for k, v in enumerate(set(y_train))}
         id_to_class = {v: k for k, v in class_to_id.items()}
-        if output_dir:
-            dump_pickle(join(output_dir, 'labels_map.pkl'), id_to_class)
+        # if output_dir:
+        #     dump_pickle(join(output_dir, 'labels_map.pkl'), id_to_class)
         train_dataset = VehicleDataset(x_train, y_train, transform=Config.train_transform, class_to_id=class_to_id)
         train_loader = torch.utils.data.DataLoader(train_dataset,
                                                    batch_size=Config.batch_size,
@@ -108,7 +108,7 @@ class LitModel(pl.LightningModule):
                                                  num_workers=Config.n_workers,
                                                  )
 
-        return train_loader, val_loader
+        return train_loader, val_loader, id_to_class
 
 
 def main():
@@ -125,14 +125,15 @@ def main():
                          default_root_dir=output_dir)
     lit_model = LitModel()
     lit_model.model.apply(BlocksTorch.weights_init)
-    train_loader, val_loader = lit_model.get_loaders(output_dir)
+    train_loader, val_loader, id2class = lit_model.get_loaders()
     print("[INFO] Training the model")
     trainer.fit(model=lit_model, train_dataloaders=train_loader, val_dataloaders=val_loader)
     weight_path = join(output_dir, "best.ckpt")
-    TorchUtils.save_config_to_weight(weight_path, Config)
     print("[INFO] Testing the model")
-    trainer.test(lit_model, ckpt_path="best", dataloaders=val_loader)
-    trainer.test(lit_model, ckpt_path="best", dataloaders=train_loader)
+    val_metrics = trainer.test(lit_model, ckpt_path="best", dataloaders=val_loader)
+    train_metrics = trainer.test(lit_model, ckpt_path="best", dataloaders=train_loader)
+    TorchUtils.save_config_to_weight(weight_path, Config, id2class=id2class, val_metrics=val_metrics,
+                                     train_metrics=train_metrics)
 
 
 if __name__ == '__main__':
